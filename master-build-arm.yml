@@ -1,0 +1,29 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool: 'Linux ARM'
+
+steps:
+- script: |
+    sudo apt-get update
+    sudo apt-get install libpng-dev
+    cd src
+    make
+  displayName: 'Run a one-line script'
+
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: 'src/'
+    Contents: 'makeip'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'bin'
+    publishLocation: 'Container'
